@@ -1,4 +1,6 @@
-$(function() {
+;(function (){
+  'use strict'
+  
   String.prototype.decodeHTML = function() {
     return $("<div>", {html: "" + this}).html();
   };
@@ -7,10 +9,15 @@ $(function() {
   
   init = function() {
     // Do this when a page loads.
+    //** INIT BUTTON **//
+    var selector = $('.stdBtn');
+    if(selector.length > 0){
+    	selector.doButton();
+    }
   },
   
   ajaxLoad = function(html) {
-    document.title = html
+    document.title = 'Loaded via Ajax:' + html
       .match(/<title>(.*?)<\/title>/)[1]
       .trim()
       .decodeHTML();	
@@ -22,6 +29,12 @@ $(function() {
   
   loadPage = function(href) {
   	$(window).trigger('ajaxpage.load');
+  	
+  	var checkUrl = window.location.pathname.split( '/' );
+  	checkUrl = checkUrl[checkUrl.length-1];
+  	$('nav .current').removeClass('current');
+    $('nav a[href="'+checkUrl+'"]').addClass('current');
+  	
     $main.load(href + " #main>*", ajaxLoad);
   };
   
@@ -33,11 +46,8 @@ $(function() {
     }
   });
 
-  $(document).on("click", "a, area", function() {
+  $(document).on('click', 'a.ajax', function() {
     var href = $(this).attr("href");
-    
-    $('.current').removeClass('current');
-    $(this).addClass('current');
 
     if (href.indexOf(document.domain) > -1
       || href.indexOf(':') === -1)
@@ -59,15 +69,4 @@ $(function() {
   		console.log('evento: ajaxpage.load -  inizio a caricare i dati remoti');
   		}
   })
-});
-
-//VEDERE IL CODICE INSIEME E POI ANALIZZARE IL PROBLEMA:
-/*
-se clicco sul menù ho un cambio di contenuto e la voce cliccata si "illumina",
-se uso le frecce sul browser invece il contenuto cambia ma il menù corrente no.
-
-1 - scrivere il perchè questo accade indicando i numeri di riga relativi alla tesi esposta
-[se eseguita correttamente vale 6/10]
-2 - modificare il codice affinché il menù segni, al caricamento di pagina, il link corrente. Utilizzando le frecce del browser faccia la stessa cosa.
-[vale 10/10 se eseguita correttamente alla domanda 1, altrimenti 6/10]
-*/
+}());
